@@ -1,0 +1,6 @@
+(library
+ (name rayml)
+ (inline_tests)
+ (preprocess
+  (pps ppx_expect ppx_let))
+ (libraries lacaml core domainslib))
