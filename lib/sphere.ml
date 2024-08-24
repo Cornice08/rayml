@@ -2,14 +2,14 @@ open! Core
 
 type t = {
   center: Point.t; 
-  transform: Matrix.t; 
+  inverse_transform: Matrix.t; 
   material: Material.t 
 }
 
-let make center transform material = 
+let make center inverse_transform material = 
   {
     center;
-    transform;
+    inverse_transform;
     material;
   }
 

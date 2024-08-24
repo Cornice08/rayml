@@ -1,12 +1,12 @@
 open! Core 
 
 type t = {
-  transform: Matrix.t; 
+inverse_transform: Matrix.t; 
   material: Material.t; 
 }
 
 let make () = { 
-  transform=Matrix.identity; 
+  inverse_transform=Matrix.identity; 
   material=Material.default ();
 }
 

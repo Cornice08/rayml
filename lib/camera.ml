@@ -5,7 +5,7 @@ module T = Domainslib.Task
 type t = {
   hsize: int;
   vsize: int;
-  transform: Matrix.t;
+  inverse_transform: Matrix.t;
   pixel_size: float;
   half_width: float; 
   half_height: float;
@@ -28,11 +28,11 @@ let make hsize vsize field_of_view =
     pixel_size; 
     half_width; 
     half_height; 
-    transform = Matrix.identity;
+    inverse_transform = Matrix.identity;
   }
 
 let set_transform camera transform = 
-  { camera with transform = transform }
+  { camera with inverse_transform = Matrix.inverse transform }
 
 let ray_for_pixel camera x y : Ray.t = 
   let xoffset = ((Float.of_int x) +. 0.5) *. camera.pixel_size in 
@@ -41,7 +41,7 @@ let ray_for_pixel camera x y : Ray.t =
   let world_x = camera.half_width -. xoffset in 
   let world_y = camera.half_height -. yoffset in 
 
-  let inverse = Matrix.inverse camera.transform in
+  let inverse =camera.inverse_transform in
 
   let pixel = Matrix.transform_point inverse (Point.make world_x world_y (-1.)) in 
 
@@ -56,8 +56,8 @@ let render camera world : Canvas.t =
   let pool = T.setup_pool ~num_domains:8 () in 
   T.run pool (fun _ -> 
     T.parallel_for pool ~start:0 ~finish:(canvas.height-1) ~body:(fun j ->
+      Printf.eprintf "Scanline %d\n %!" (vsize - j);
       for i = 0 to canvas.width-1 do 
-      (* Printf.eprintf "Scanlines remaining %d\n %!" (vsize - j); *)
         let ray = ray_for_pixel camera i j in 
         let color = World.color_at world ray in 
         Canvas.set_pixel_at canvas i j color;

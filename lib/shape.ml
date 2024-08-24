@@ -10,13 +10,13 @@ type intersection = {
   obj: t
 }
 
-let get_transform shape = 
+let get_inverse_transform shape = 
   match shape with 
-  | Sphere { transform; _ } -> transform
-  | Plane { transform; _ } -> transform
+  | Sphere { inverse_transform; _ } -> inverse_transform
+  | Plane { inverse_transform; _ } -> inverse_transform
 
 let intersect (shape: t) ray  = 
-  let ray = Ray.transform ray (Matrix.inverse (get_transform shape)) in
+  let ray = Ray.transform ray (get_inverse_transform shape) in
 
   let intersections = match shape with 
     | Sphere sphere -> 
@@ -42,8 +42,7 @@ let local_normal_at shape point =
   | Plane _ -> Plane.normal_at ()
 
 let normal_at shape point = 
-  let transform = get_transform shape in 
-  let inverse = Matrix.inverse transform in 
+  let inverse = get_inverse_transform shape in 
   let obj_point = Matrix.transform_point inverse point in 
   let obj_normal = local_normal_at shape obj_point in
 
@@ -122,7 +121,7 @@ let%expect_test "intersecting scaled sphere" =
   let ray = Ray.make (Point.make 0. 0. (-5.)) (Vector.make 0. 0. 1.) in 
   let sphere = Sphere.unit () in 
   let scaling = Matrix.scaling 2.0 in 
-  let sphere = {sphere with transform = scaling} in 
+  let sphere = {sphere with inverse_transform = scaling |> Matrix.inverse} in 
 
   let intersections = intersect (Sphere sphere) ray in 
 
@@ -134,7 +133,7 @@ let%expect_test "intersecting translated sphere" =
   let ray = Ray.make (Point.make 0. 0. (-5.)) (Vector.make 0. 0. 1.) in 
   let sphere = Sphere.unit () in 
   let translation = Matrix.translation 5.0 0. 0. in 
-  let sphere = {sphere with transform = translation} in 
+  let sphere = {sphere with inverse_transform = translation |> Matrix.inverse} in 
 
   let intersections = intersect (Sphere sphere) ray in 
 
