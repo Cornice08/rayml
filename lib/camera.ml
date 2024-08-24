@@ -56,7 +56,7 @@ let render camera world : Canvas.t =
   let pool = T.setup_pool ~num_domains:8 () in 
   T.run pool (fun _ -> 
     T.parallel_for pool ~start:0 ~finish:(canvas.height-1) ~body:(fun j ->
-      Printf.eprintf "Scanline %d\n %!" (vsize - j);
+      (* Printf.eprintf "Scanline %d\n %!" (vsize - j);*)
       for i = 0 to canvas.width-1 do 
         let ray = ray_for_pixel camera i j in 
         let color = World.color_at world ray in 
