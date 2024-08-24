@@ -1,12 +1,11 @@
-open Lacaml.D
-open Core 
+open! Core 
 
 module T = Domainslib.Task
 
 type t = {
   hsize: int;
   vsize: int;
-  transform: mat;
+  transform: Matrix.t;
   pixel_size: float;
   half_width: float; 
   half_height: float;
@@ -29,7 +28,7 @@ let make hsize vsize field_of_view =
     pixel_size; 
     half_width; 
     half_height; 
-    transform = Mat.identity 4;
+    transform = Matrix.identity;
   }
 
 let set_transform camera transform = 
@@ -48,7 +47,7 @@ let ray_for_pixel camera x y : Ray.t =
 
   let origin = Matrix.transform_point inverse Point.origin in 
 
-  let direction = Vector.normalize (Vec.sub pixel origin) in 
+  let direction = Vector.normalize (Vector.sub pixel origin) in 
   Ray.make origin direction
 
 let render camera world : Canvas.t = 
@@ -89,16 +88,8 @@ let%expect_test "ray through corner of canvas" =
   let camera = make 201 101 (Float.pi /. 2.) in 
   let ray = ray_for_pixel camera 0 0 in 
 
-  Format.printf "%a" pp_vec ray.origin;
-  [%expect {|
-    0
-    0
-    0
-    |}];
-    Format.printf "%a" pp_vec ray.direction;
-  [%expect {|
-     0.665186
-     0.332593
-    -0.668512
-    |}];
+  Format.printf "%a" Vector.pp ray.origin;
+  [%expect {| [0.; 0.; 0.] |}];
+    Format.printf "%a" Vector.pp ray.direction;
+  [%expect {| [0.665186426119; 0.33259321306; -0.66851235825] |}];
 ;;

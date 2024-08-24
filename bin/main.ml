@@ -1,7 +1,5 @@
 open Rayml
 
-
-
 let () = 
   let light = Light.point (Point.make (-10.) 10. (-10.)) Color.white in 
   let world = World.make light in

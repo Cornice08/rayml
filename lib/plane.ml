@@ -11,10 +11,12 @@ let make () = {
 }
 
 let local_intersect (ray: Ray.t) = 
-  if Float.(Float.abs ray.direction.{2} < 0.0001) then 
+  let (_, dir_y, _) = Vector.elements ray.direction in 
+  let (_, o_y, _) = Vector.elements ray.origin in
+  if Float.(Float.abs dir_y < 0.0001) then 
     [] 
   else
-    let t = -.ray.origin.{2} /. ray.direction.{2} in 
+    let t = -.o_y /. dir_y in 
     [t]
     
 

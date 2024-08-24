@@ -1,46 +1,64 @@
-open Lacaml.D
-include Lacaml.D.Vec
+open! Core
 
-type t = vec
+type t = float list [@@deriving show]
 
-let make x y z = Vec.of_list [x; y; z]
+let of_list l = l
 
-let pp_vec = pp_vec
+let make x y z = [x; y; z]
 
 let scalar_mul v x = 
-  Vec.map (fun e -> e *. x) v
+  List.map ~f:(fun e -> e *. x) v
 
 let scalar_div v x = 
-  Vec.map (fun e -> e /. x) v
+  List.map ~f:(fun e -> e /. x) v
+
+let sqr v = 
+  List.map ~f:(fun e -> e ** 2.) v
+
+let sum v = 
+  List.fold_left ~f:(+.) ~init:0. v 
 
 let magnitude v = 
-  let sqrd = Vec.sqr v in 
-  let sum = Vec.sum sqrd in 
+  let sqrd = sqr v in 
+  let sum = sum sqrd in 
   Float.sqrt sum
 
 let normalize v : t = 
   let mag = magnitude v in
-  Vec.map (fun e -> e /. mag) v
+  List.map ~f:(fun e -> e /. mag) v
+
+let mul v1 v2 = 
+  List.map2_exn ~f:( *.) v1 v2
+
+let sub v1 v2 : t = 
+  List.map2_exn ~f:(-.) v1 v2
+
+let add v1 v2 : t = 
+  List.map2_exn ~f:(+.) v1 v2
+
+let neg v = 
+  List.map ~f:(fun a -> -.a) v
 
 let dot a b = 
-  Vec.sum (Vec.mul a b)
+  sum (mul a b)
 
-let cross a b = 
- let ax = a.{1} in 
- let ay = a.{2} in 
- let az = a.{3} in 
- let bx = b.{1} in 
- let by = b.{2} in 
- let bz = b.{3} in 
+let elements v = 
+  match v with 
+  | [x; y; z] -> (x, y, z)
+  | _ -> failwith "Vector should contain three elements" 
 
- Vec.of_list [
+let cross a b : t = 
+ let (ax, ay, az) = elements a in 
+ let (bx, by, bz) = elements b in 
+
+[
   ay *. bz -. az *. by; 
   az *. bx -. ax *. bz; 
   ax *. by -. ay *. bx
 ]
 
 let reflect_about_normal v ~normal = 
-  Vec.sub v (scalar_mul normal (2. *. dot v normal))
+  sub v (scalar_mul normal (2. *. dot v normal))
 
 
 let%expect_test "reflect 45 degree vector" = 
@@ -49,11 +67,7 @@ let%expect_test "reflect 45 degree vector" =
 
   let reflect = reflect_about_normal v ~normal in 
 
-  Format.printf "%a" pp_vec reflect;
+  Format.printf "%a" pp reflect;
 
-  [%expect {|
-    1
-    1
-    0
-    |}]
+  [%expect {| [1.; 1.; 0.] |}]
 ;;

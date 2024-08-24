@@ -164,51 +164,35 @@ let%expect_test "normal of point on x axis" =
   let sphere = Sphere.unit () in 
   let normal = normal_at (Sphere sphere) (Point.make 1. 0. 0.) in
 
-  Format.printf "%a" Vector.pp_vec normal;
+  Format.printf "%a" Vector.pp normal;
 
-  [%expect {|
-    1
-    0
-    0
-    |}]
+  [%expect {| [1.; 0.; 0.] |}]
 ;;
 
 let%expect_test "normal of point on y axis" = 
   let sphere = Sphere.unit () in 
   let normal = normal_at (Sphere sphere) (Point.make 0. 1. 0.) in
 
-  Format.printf "%a" Vector.pp_vec normal;
+  Format.printf "%a" Vector.pp normal;
 
-  [%expect {|
-    0
-    1
-    0
-    |}]
+  [%expect {| [0.; 1.; 0.] |}]
 ;;
 
 let%expect_test "normal of point on z axis" = 
   let sphere = Sphere.unit () in 
   let normal = normal_at (Sphere sphere) (Point.make 0. 0. 1.) in
 
-  Format.printf "%a" Vector.pp_vec normal;
+  Format.printf "%a" Vector.pp normal;
 
-  [%expect {|
-    0
-    0
-    1
-    |}]
+  [%expect {| [0.; 0.; 1.] |}]
 ;;
 
 let%expect_test "normal of point on z axis" = 
   let sphere = Sphere.unit () in 
   let normal = normal_at (Sphere sphere) (Point.make 0. 0. 1.) in
 
-  Format.printf "%a" Vector.pp_vec normal;
+  Format.printf "%a" Vector.pp normal;
 
-  [%expect {|
-    0
-    0
-    1
-    |}]
+  [%expect {| [0.; 0.; 1.] |}]
 ;;
 
