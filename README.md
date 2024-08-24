@@ -4,4 +4,4 @@ Ocaml implementation of [The Ray Tracer Challenge](http://raytracerchallenge.com
 
 # Running
 
-`dune exec rayml`
+`dune exec rayml > image.ppm`
