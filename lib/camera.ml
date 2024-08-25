@@ -53,7 +53,8 @@ let ray_for_pixel camera x y : Ray.t =
 let render camera world : Canvas.t = 
   let hsize, vsize = camera.hsize, camera.vsize in 
   let canvas = Canvas.make hsize vsize in 
-  let pool = T.setup_pool ~num_domains:8 () in 
+  let t = Core_unix.gettimeofday () in
+  let pool = T.setup_pool ~num_domains:6 () in 
   T.run pool (fun _ -> 
     T.parallel_for pool ~start:0 ~finish:(canvas.height-1) ~body:(fun j ->
       (* Printf.eprintf "Scanline %d\n %!" (vsize - j);*)
@@ -62,9 +63,17 @@ let render camera world : Canvas.t =
         let color = World.color_at world ray in 
         Canvas.set_pixel_at canvas i j color;
       done
-      )
+    );
   );
   T.teardown_pool pool;
+  Printf.eprintf "Rendering time: %fs\n" (Core_unix.gettimeofday () -. t);
+  (* for j = 0 to canvas.height-1 do 
+    for i = 0 to canvas.width-1 do 
+      let ray = ray_for_pixel camera i j in 
+      let color = World.color_at world ray in 
+      Canvas.set_pixel_at canvas i j color;
+    done
+  done;*)
 
   canvas
 

@@ -3,4 +3,4 @@
  (inline_tests)
  (preprocess
   (pps ppx_expect ppx_let ppx_deriving.show))
- (libraries core lacaml domainslib))
+ (libraries core core_unix lacaml domainslib))
